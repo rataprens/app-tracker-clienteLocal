@@ -1,0 +1,18 @@
+<ion-header>
+    <ion-navbar color="primary">
+        <ion-buttons>
+            <button ion-button (click)="salir()">
+               Salir
+            </button>
+        </ion-buttons>
+        <ion-title>
+            Siguiendo a {{user.nombre}}
+        </ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="15">
+        <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+    </agm-map>
+</ion-content>
