@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { NavController, Platform } from 'ionic-angular';
+import { NavController, Platform, NavParams } from 'ionic-angular';
 import { UbicacionProvider } from '../../providers/ubicacion/ubicacion';
 import { LoginPage } from '../login/login';
-import { UsuarioProvider } from '../../providers/usuario/usuario';
+import { UsuarioProvider, Credenciales } from '../../providers/usuario/usuario';
 import { AngularFirestore } from '@angular/fire/firestore';
-import swal from 'sweetalert';
 import { Subscription } from 'rxjs';
+import { Geolocation } from '@ionic-native/geolocation';
 
 @Component({
   selector: 'page-home',
@@ -21,52 +21,55 @@ export class HomePage {
   claveConductor: string;
   claveUnica: string;
   estado: Subscription;
+  watchSub:Subscription;
+  usuario: Credenciales;
 
   constructor(public navCtrl: NavController, 
               public _ubicacionProv: UbicacionProvider, 
               public platform: Platform,
               public _usuarioProv: UsuarioProvider,
-              private db:AngularFirestore) {
-        
-                 
+              private db:AngularFirestore,
+              public geolocation:Geolocation,
+              public navParams:NavParams) {
+               
+                this.iniciarGeolocalizacion();
+                console.log(this._usuarioProv.authenticated);
+                this.user = this.navParams.data;
+                console.log(this.user);
               }
+              
     ionViewDidLoad(){
-              this.platform.ready().then(()=>{
-                  this.user = this._usuarioProv.user;
-                  this.empresa = this.user.empresa;
-                  this.nombreConductor = this.user.nombre;
-                  this.claveConductor = this.user.clave;
-                  this.claveUnica = this._usuarioProv.clave;
-                  console.log(this.claveUnica);
-                  this.estado =  this.db.collection(`${this.empresa}`).doc('cliente')
-                          .collection('rooms').doc(`${this.claveUnica}`).valueChanges().subscribe(data=>{
-                            if(data){
-                              this.db.collection(`${this.empresa}`).doc('movil').collection('usuarios').doc(`${this.claveConductor}`).valueChanges().subscribe((data:any)=>{
-                                console.log("ROOM ACTIVA");
-                                console.log(data);
-                                this.lat = data.lat;
-                                this.lng = data.lng;
-                              })
-                            }else{
-                              console.log("ROOM DESACTIVADA");
-                              swal("La ruta ya expiro", "muchas gracias!","warning", {
-                                className: "swal-color"
-                              })
-                              this._usuarioProv.borrarStorage()
-                              this.navCtrl.setRoot(LoginPage);
-                            }
-                          });
-              });
-
 
   }
 
   salir(){
    
-    this._usuarioProv.borrarStorage();
-    this.navCtrl.setRoot( LoginPage);
-    this.estado.unsubscribe();
+    this._usuarioProv.signOut();
+    this.detenerGeolocalizacion();
+    this.navCtrl.setRoot(LoginPage);
 
+  }
+
+  iniciarGeolocalizacion(){
+    
+      this.geolocation.getCurrentPosition().then((resp) => {
+        this.lat = resp.coords.latitude
+        this.lng = resp.coords.longitude
+       }).catch((error) => {
+         console.log('Error getting location', error);
+       });
+       
+        let watch = this.geolocation.watchPosition();
+        this.watchSub = watch.subscribe((data) => {
+        // data can be a set of coordinates, or an error (if an error occurred).
+        this.lat = data.coords.latitude
+        this.lng = data.coords.longitude
+       });
+    
+  }
+
+  detenerGeolocalizacion(){
+    this.watchSub.unsubscribe();
   }
 
 }

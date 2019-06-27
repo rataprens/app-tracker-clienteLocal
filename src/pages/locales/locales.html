@@ -8,14 +8,13 @@
             Salir
         </button>
         <ion-title>
-            Mapa
-            <ion-icon name="pin-outline"></ion-icon>
+            Locales
+            <ion-icon name="home-outline"></ion-icon>
         </ion-title>
     </ion-navbar>
 </ion-header>
 
-<ion-content>
-    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="15">
-        <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
-    </agm-map>
+<ion-content padding>
+
+    <button ion-button *ngFor="let local of locales" block (click)="detallesLocal()"> {{local.nombre}} </button>
 </ion-content>

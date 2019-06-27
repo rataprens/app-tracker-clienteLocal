@@ -9,9 +9,6 @@ import { Platform } from 'ionic-angular';
 @Injectable()
 export class UbicacionProvider {
 
-  taxista: AngularFirestoreDocument<any>;
-  taxistaWeb: AngularFirestoreDocument<any>;
-  private watch: Subscription;
 
   constructor(private geolocation: Geolocation, private afDB: AngularFirestore,
               private _usuarioProv: UsuarioProvider,public platform: Platform) {

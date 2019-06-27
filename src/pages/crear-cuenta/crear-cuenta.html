@@ -1,0 +1,88 @@
+<ion-header>
+    <ion-navbar>
+        <ion-buttons>
+            <button ion-button (click)="atras()" end>
+                <ion-icon name="arrow-back">
+                    Atrás
+                </ion-icon>
+            </button>
+        </ion-buttons>
+        <ion-title>Registrate</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+    <form (ngSubmit)="signup()" [formGroup]="form">
+
+        <ion-list inset>
+            <!-- NOMBRE -->
+            <ion-item>
+                <ion-label floating>Nombre</ion-label>
+                <ion-input type="text" formControlName="nombre"></ion-input>
+            </ion-item>
+            <div>
+                <div>
+                    El nombre es requerido
+                </div>
+            </div>
+            <!-- FIN NOMBRE -->
+            <!-- APELLIDO -->
+            <ion-item>
+                <ion-label floating>Apellido</ion-label>
+                <ion-input type="text" formControlName="apellido"></ion-input>
+            </ion-item>
+            <div>
+                <div>
+                    El apellido es requerido
+                </div>
+            </div>
+            <!-- FIN APELLIDO -->
+            <!-- EMAIL -->
+            <ion-item>
+                <ion-label floating>Email</ion-label>
+                <ion-input type="email" formControlName="email"></ion-input>
+            </ion-item>
+            <div>
+                <div>
+                    El email es requerido
+                </div>
+            </div>
+            <!-- FIN EMAIL -->
+            <!-- PASSWORD -->
+            <ion-item>
+                <ion-label floating>Contraseña</ion-label>
+                <ion-input type="password " formControlName="password"></ion-input>
+            </ion-item>
+            <div>
+                <div>
+                    Contraseña es requerida
+                </div>
+                <div>
+                    6 caracteres minimo, 12 caracteres maximo
+                </div>
+            </div>
+            <!-- FIN PASSWORD -->
+            <!-- REPETIR PASSWORD -->
+            <ion-item>
+                <ion-label floating>Repetir Contraseña</ion-label>
+                <ion-input type="password " formControlName="passwordRepetir"></ion-input>
+            </ion-item>
+            <div>
+                <div>
+                    Contraseña es requerida
+                </div>
+                <div>
+                    6 caracteres minimo, 12 caracteres maximo
+                </div>
+            </div>
+            <!-- FIN REPETIR PASSWORD -->
+        </ion-list>
+
+        <div padding-horizontal>
+            <div class="form-error ">{{signupError}}</div>
+
+            <button ion-button full type="submit">Registrar</button>
+        </div>
+    </form>
+</ion-content>

@@ -1,10 +1,10 @@
-<ion-content padding class="color-background">
+<ion-content padding class="fondoimagen">
 
     <ion-slides pager>
 
         <ion-slide color="primary">
 
-            <ion-toolbar>
+            <!--             <ion-toolbar>
             </ion-toolbar>
 
             <img src="assets/imgs/user.png" class="slide-image" />
@@ -17,7 +17,33 @@
 
             <button ion-button block (click)="abrirPromp()" class="dosis">
             Ingresar
-          </button>
+          </button> -->
+
+            <div class="login-box">
+                <img style="width: 200px; height: 170px" src="assets/imgs/user.png" class="slide-image" />
+                <div class="textbox">
+                    <ion-item>
+                        <ion-label color="primary" floating>Correo</ion-label>
+                        <ion-input [(ngModel)]="email" type="email" clearInput></ion-input>
+                    </ion-item>
+                </div>
+                <div class="textbox">
+                    <ion-item>
+                        <ion-label color="primary" floating>Contraseña</ion-label>
+                        <ion-input [(ngModel)]="password" type="password" clearInput></ion-input>
+                    </ion-item>
+                </div>
+                <ion-label (click)="crearCuenta()">¿No tienes una cuenta?,Registrate</ion-label>
+                <button ion-button block class="btn" (click)="ingresarEmail()">Ingresar con Email 
+                    <ion-icon style="padding-left: 10px" name="mail"></ion-icon>
+                </button>
+                <button ion-button block class="btn" (click)="ingresarFacebook()">Ingresar con 
+                        <ion-icon style="padding-left: 10px" name="logo-facebook"></ion-icon>
+                </button>
+                <button ion-button block class="btn" (click)="ingresarGoogle()">Ingresar con
+                    <ion-icon style="padding-left: 10px" name="logo-google"></ion-icon>
+                </button>
+            </div>
 
         </ion-slide>
 
@@ -45,4 +71,4 @@
     </ion-slides>
 
 
-</ion-content>
+</ion-content>x

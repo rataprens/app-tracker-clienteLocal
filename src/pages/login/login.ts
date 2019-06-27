@@ -4,6 +4,7 @@ import { UsuarioProvider } from '../../providers/usuario/usuario';
 import { HomePage } from '../home/home';
 import swal from 'sweetalert';
 import { UbicacionProvider } from '../../providers/ubicacion/ubicacion';
+import { CrearCuentaPage } from '../crear-cuenta/crear-cuenta';
 
 
 
@@ -15,8 +16,9 @@ import { UbicacionProvider } from '../../providers/ubicacion/ubicacion';
 })
 export class LoginPage {
   
-  
-   empresa:string;
+  email:any;
+  password:any;
+  empresa:string;
 
   @ViewChild(Slides) slides: Slides
 
@@ -33,106 +35,60 @@ export class LoginPage {
     this.slides.freeMode = false;
   }
 
-  async abrirPromp(){
-    /* let alert = this.alertCtrl.create({
-      title: 'Ingresa',
-      inputs: [
-        {
-          name: 'password',
-          placeholder: 'password',
-          type: 'password'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          handler: data =>{
-            console.log("usuario a cancelado")
-          }
-        },
-        {
-          text: 'Ingresar',
-          handler: data =>{
-            console.log(data);
-            if(data.password){
-              this.verificarUsuario(data.password);
-            }else{
-              this.verificarUsuario("null");
-            }
-          }
-        }
-      ]
-    });
-    alert.present(); */
-      if(this.empresa){
-          
-              swal({
-                title:'Ingresa tu id de tracking',
-                content: {
-                  element: "input",
-                  attributes: {
-                    placeholder: "Escribe un id de tracking",
-                    type: "text"
-                  }
-                },
-                className: "swal-color",
-                timer : 20000
-              }).then(data=>{
-                if(data){
-                    this.verificarUsuario(data, this.empresa);
-                }else{
-                  swal("Ingrese contraseña", "Intente ingresando una contraseña", "warning", {
-                    timer: 2500,
-                    className:"swal-color"  
-                  })
-                }
-              });
-          
-      }else{
-
-        return false;
-      }
-  }
-
-  verificarUsuario(clave:string, empresa:string){
-    let loading = this.loadingCrl.create({
-      content: 'Verificando'
-    });
-
-    loading.present()
-    console.log(clave);
-
-    this._usuarioProv.verificarUsuario(clave, empresa)
-                .then(existe =>{
-                  if(existe){
-                    loading.dismiss();
-                    this.slides.lockSwipes(false);
-                    this.slides.freeMode = true;
-                    this.slides.slideNext();
-                    this.slides.lockSwipes(true);
-                    this.slides.freeMode = false;
-                    /* this._ubicacion.iniciarTaxista(); */
-                  }else{
-
-                    this.alertCtrl.create({
-                      title: 'Contraseña o Empresa Incorrecta',
-                      subTitle: 'Reintente o pongase en contacto con la administración',
-                      buttons: [
-                        'aceptar'
-                      ]
-                    }).present();
-                      
-                    loading.dismiss();
-                  }
-                });
-
-    
-
-  }
-
   irPagina(){
     this.navCtrl.setRoot(HomePage);
+  }
+
+
+  ingresarEmail(){
+    //Verificar si el email y el password sean verdaderos
+    if(this.email && this.password){
+      //S
+      let loading = this.loadingCrl.create({
+        content: 'Verificando'
+      });
+  
+      loading.present()
+        if(this.email != ""){
+          if(this.password != ""){
+            let credentials = {
+              email : this.email,
+              password: this.password
+            }
+            this._usuarioProv.signInWithEmail(credentials).then(()=>{
+              loading.dismiss();
+              this.slides.lockSwipes(false);
+              this.slides.freeMode = true;
+              this.slides.slideNext();
+              this.slides.lockSwipes(true);
+              this.slides.freeMode = false;
+            });
+          }else{
+              console.log("ingrese password");
+              loading.dismiss();
+          }
+        }else{
+          console.log("ingrese email");
+          loading.dismiss();
+        }
+    }else{
+      console.log("ingrese contraseña")
+    }
+  }
+
+  ingresarFacebook(){
+    this._usuarioProv.signInWithFacebook();
+  }
+
+  ingresarGoogle(){
+      /* this._usuarioProv.signInWithGoogle().then(
+        () => this.navCtrl.setRoot(HomePage),
+        error => console.log(error.message)
+      ); */
+  }
+
+  crearCuenta(){
+    this.navCtrl.setRoot(CrearCuentaPage);
   }
 
 }
