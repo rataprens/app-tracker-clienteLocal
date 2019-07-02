@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Storage } from '@ionic/storage';
 import { Platform } from 'ionic-angular';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, Subject } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth/auth';
 import * as firebase from 'firebase/app';
+import { UbicacionProvider } from '../ubicacion/ubicacion';
+import { Facebook } from '@ionic-native/facebook';
 
 
 @Injectable()
@@ -16,7 +18,7 @@ export class UsuarioProvider {
   private doc: Subscription;
   usuario: Credenciales = {}
 
-  constructor(public afAuth:AngularFireAuth, private afDB: AngularFirestore, private storage: Storage, private platform:Platform) {
+  constructor(private fb:Facebook ,public afAuth:AngularFireAuth, private afDB: AngularFirestore, private storage: Storage, private platform:Platform) {
      
     afAuth.authState.subscribe(user=>{
       this.userAuth = user;
@@ -30,6 +32,7 @@ export class UsuarioProvider {
     this.usuario.imagen = imagen;
     this.usuario.uid = uid;
     this.usuario.provider = provider;
+    console.log('ser cargo usuario');
   }
 
   get authenticated(): boolean {
@@ -52,21 +55,39 @@ export class UsuarioProvider {
 
   }
 
-
   signInWithFacebook(){
-    console.log("sign in with facebook");
-    return this.afAuth.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider()).then(res =>{
-      console.log(res);
-      let user = res.user;
-      this.cargarUsuario(
-        user.displayName,
-        user.email,
-        user.photoURL,
-        user.uid,
-        'facebook'
-      );
-      this.guardarStorage();
-    });
+    if(this.platform.is('cordova')){
+      //celular
+      this.fb.login(['email', 'public_profile']).then(res => {
+        const facebookCredential = firebase.auth.FacebookAuthProvider.credential(res.authResponse.accessToken);
+        firebase.auth().signInWithCredential(facebookCredential).then(user=>{
+          
+          this.cargarUsuario(
+            user.displayName,
+            user.email,
+            user.photoURL,
+            user.uid,
+            'facebook'
+          );
+          this.guardarStorage();
+        }).catch( e=> console.log('error con el login' + JSON.stringify(e)));
+      })
+    }else{
+      //escritorio      
+      console.log("sign in with facebook desktop");
+      return this.afAuth.auth.signInWithPopup(new firebase.auth.FacebookAuthProvider()).then(res =>{
+        console.log(res);
+        let user = res.user;
+        this.cargarUsuario(
+          user.displayName,
+          user.email,
+          user.photoURL,
+          user.uid,
+          'facebook'
+        );
+        this.guardarStorage();
+      });
+    }
   }
   
   signInWithGoogle(){
@@ -74,7 +95,26 @@ export class UsuarioProvider {
 
   signup(credentials){
     console.log("sign up");
-    return this.afAuth.auth.createUserWithEmailAndPassword(credentials.email, credentials.password);
+    return this.afAuth.auth.createUserWithEmailAndPassword(credentials.email, credentials.password).then(() =>{
+      let user = this.afAuth.auth.currentUser;
+      user.updateProfile({
+        displayName: credentials.nombre
+      });
+      
+      /* 
+        this.cargarUsuario(
+        user.displayName,
+        user.email,
+        user.photoURL,
+        user.uid,
+        'facebook'
+      );
+      console.log(this.usuario);
+      this.guardarStorage(); 
+      */
+
+      console.log('usuario creado');
+    });
   }
 
   verificarUsuario(clave:string, empresa:string){
@@ -109,6 +149,7 @@ export class UsuarioProvider {
 
   guardarStorage(){
     //Verificamos en que plataforma estamos
+    console.log(this.usuario);
       if(this.platform.is('cordova')){
         //Celular
           this.storage.set('nombre', this.usuario.nombre);
@@ -123,7 +164,9 @@ export class UsuarioProvider {
           localStorage.setItem('imagen', this.usuario.imagen);
           localStorage.setItem('uid', this.usuario.uid);
           localStorage.setItem('provider', this.usuario.provider);
-      }   
+      }
+      console.log('ser guardo en el storage') ;
+      
   }
 
 /*   cargarStorage(){
@@ -176,6 +219,35 @@ export class UsuarioProvider {
     if(this.doc){ 
         this.doc.unsubscribe();
     }
+  }
+
+  getRoom(empresa:string, codigo:string): Observable<any>{
+    let subject = new Subject<any>();
+    this.afDB.collection('locales').doc(`${empresa}`).collection('rooms').doc(`${codigo}`).valueChanges().subscribe((data:any)=>{
+      if(data.length != 0){
+        subject.next(data);
+      }else{
+        console.log('no hay informacion');
+        
+      }
+    });
+      return subject.asObservable();
+  }
+
+  getUbicacionRepartidor(empresa:string, clave:string ){
+    let subject = new Subject<any>();
+    console.log(clave);
+    this.afDB.collection('locales').doc(`${empresa}`).collection('movil').doc(`${clave}`).valueChanges().subscribe((data:any)=>{
+      console.log(data);
+      
+      if(data){
+        subject.next(data);
+      }else{
+        console.log('no hay informacion');
+        
+      }
+    });
+      return subject.asObservable();
   }
 
 }

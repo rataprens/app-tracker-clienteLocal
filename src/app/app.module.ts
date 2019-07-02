@@ -34,8 +34,13 @@ import { Geolocation } from '@ionic-native/geolocation';
 
 //Plugin de google maps
 import { AgmCoreModule } from '@agm/core';
+import { AgmDirectionModule } from 'agm-direction';
 
 import { NgxErrorsModule } from '@ultimate/ngxerrors';
+
+//plugin Facebook
+import { Facebook } from '@ionic-native/facebook';
+
 
 
 
@@ -62,7 +67,8 @@ import { NgxErrorsModule } from '@ultimate/ngxerrors';
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCNrSxTaaXtAZy3Wtucs6voOjCxJGpuujM'
     }),
-    NgxErrorsModule
+    NgxErrorsModule,
+    AgmDirectionModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -82,7 +88,8 @@ import { NgxErrorsModule } from '@ultimate/ngxerrors';
     UsuarioProvider,
     UbicacionProvider,
     Geolocation,
-    AngularFireAuth
+    AngularFireAuth,
+    Facebook
   ]
 })
 export class AppModule {}

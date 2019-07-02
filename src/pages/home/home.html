@@ -15,7 +15,14 @@
 </ion-header>
 
 <ion-content>
-    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="15">
-        <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+    <agm-map (mapReady)="mapReadY($event)" [latitude]="usuario.lat" [longitude]="usuario.lng" [zoom]="15">
+        <agm-marker [latitude]="usuario.lat" [longitude]="usuario.lng">
+            <agm-info-window>
+                Tú
+            </agm-info-window>
+        </agm-marker>
     </agm-map>
+    <ion-fab top right>
+        <button ion-fab mini (click)="localizar()"><ion-icon name="locate-outline"></ion-icon></button>
+    </ion-fab>
 </ion-content>

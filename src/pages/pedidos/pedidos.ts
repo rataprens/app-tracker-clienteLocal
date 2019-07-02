@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AgregarSeguimientoPage } from '../agregar-seguimiento/agregar-seguimiento';
 import { HomePage } from '../home/home';
 import { UsuarioProvider } from '../../providers/usuario/usuario';
+import { UbicacionProvider } from '../../providers/ubicacion/ubicacion';
 
 
 @IonicPage()
@@ -13,7 +14,7 @@ import { UsuarioProvider } from '../../providers/usuario/usuario';
 })
 export class PedidosPage {
 
-  constructor(public _usuarioProv:UsuarioProvider, public home:HomePage, public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public _usuarioProv:UsuarioProvider, public _ubicacionProv:UbicacionProvider, public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
@@ -22,10 +23,10 @@ export class PedidosPage {
 
   salir(){
     this._usuarioProv.signOut();
-    this.home.detenerGeolocalizacion();
+    this._ubicacionProv.detenerGeolocalizacion();
   }  
 
-  comenzarSeguimiento(){
+  agregarSeguimiento(){
     this.navCtrl.setRoot(AgregarSeguimientoPage);
   }
 

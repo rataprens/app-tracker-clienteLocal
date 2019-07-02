@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, Platform, NavParams } from 'ionic-angular';
-import { UbicacionProvider } from '../../providers/ubicacion/ubicacion';
+import { NavController, Platform, NavParams, AlertController } from 'ionic-angular';
+import { UbicacionProvider, Usuario } from '../../providers/ubicacion/ubicacion';
 import { LoginPage } from '../login/login';
-import { UsuarioProvider, Credenciales } from '../../providers/usuario/usuario';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { UsuarioProvider } from '../../providers/usuario/usuario';
 import { Subscription } from 'rxjs';
 import { Geolocation } from '@ionic-native/geolocation';
 
@@ -13,63 +12,48 @@ import { Geolocation } from '@ionic-native/geolocation';
 })
 export class HomePage {
   
-  lat: number = 51.678418;
-  lng: number = 7.809007;
-  user: any = {};
+  lat: number;
+  lng: number;
+  user:any = {};
   empresa: string ;
   nombreConductor: string;
   claveConductor: string;
   claveUnica: string;
   estado: Subscription;
   watchSub:Subscription;
-  usuario: Credenciales;
+  usuario: Usuario = {};
+  map:any;
 
   constructor(public navCtrl: NavController, 
               public _ubicacionProv: UbicacionProvider, 
               public platform: Platform,
               public _usuarioProv: UsuarioProvider,
-              private db:AngularFirestore,
               public geolocation:Geolocation,
-              public navParams:NavParams) {
+              public navParams:NavParams, public alertCtrl:AlertController) {
                
-                this.iniciarGeolocalizacion();
-                console.log(this._usuarioProv.authenticated);
-                this.user = this.navParams.data;
-                console.log(this.user);
+                this._ubicacionProv.iniciarGeolocalizacion();
+                console.log(_usuarioProv.authenticated);
+                this.usuario = this._ubicacionProv.user;
+                console.log(this.usuario);
               }
               
     ionViewDidLoad(){
-
+      console.log('ion view did load');
+      
   }
 
+  localizar(){
+      console.log('boton Localizar');
+      this.map.setCenter({lat:this.usuario.lat, lng:this.usuario.lng});
+      this.map.setZoom(16);
+  }
+  
   salir(){
-   
     this._usuarioProv.signOut();
-    this.detenerGeolocalizacion();
-    this.navCtrl.setRoot(LoginPage);
-
+    this._ubicacionProv.detenerGeolocalizacion();
   }
 
-  iniciarGeolocalizacion(){
-    
-      this.geolocation.getCurrentPosition().then((resp) => {
-        this.lat = resp.coords.latitude
-        this.lng = resp.coords.longitude
-       }).catch((error) => {
-         console.log('Error getting location', error);
-       });
-       
-        let watch = this.geolocation.watchPosition();
-        this.watchSub = watch.subscribe((data) => {
-        // data can be a set of coordinates, or an error (if an error occurred).
-        this.lat = data.coords.latitude
-        this.lng = data.coords.longitude
-       });
-    
+  mapReadY(map){
+    this.map = map;
   }
-
-  detenerGeolocalizacion(){
-    this.watchSub.unsubscribe();
-  }
-
 }

@@ -4,11 +4,33 @@
             Atrás
         </button>
         <ion-title>
-            Comenzar un seguimiento
+            Seguimiento
         </ion-title>
     </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
+    <form novalidate [formGroup]="form" (ngSubmit)="comenzar()">
+        <ion-item>
+            <ion-label floating>Empresa</ion-label>
+            <ion-input type="text" formControlName="empresa" required></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label floating>Código de Seguimiento</ion-label>
+            <ion-input type="text" formControlName="codigoSeguimiento" required></ion-input>
+        </ion-item>
+
+        <button ion-button full type="submit" [disabled]="form.invalid">Comenzar Seguimiento</button>
+    </form>
+
+
+    <agm-map (mapReady)="mapReady($event)" [latitude]="usuario.lat" [longitude]="usuario.lng" [zoom]="15">
+        <agm-marker [latitude]="usuario.lat" [longitude]="usuario.lng">
+            <agm-info-window>Tú</agm-info-window>
+        </agm-marker>
+        <agm-direction *ngIf="comenzarSeguimiento" [origin]="origin" [destination]="destination">
+        </agm-direction>
+    </agm-map>
+
 
 </ion-content>

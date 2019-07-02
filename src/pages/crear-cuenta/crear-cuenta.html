@@ -13,39 +13,39 @@
 
 <ion-content padding>
 
-    <form (ngSubmit)="signup()" [formGroup]="form">
+    <form (ngSubmit)="signup()" novalidate [formGroup]="form">
 
         <ion-list inset>
             <!-- NOMBRE -->
             <ion-item>
                 <ion-label floating>Nombre</ion-label>
-                <ion-input type="text" formControlName="nombre"></ion-input>
+                <ion-input id="nombre" type="text" name="nombre" formControlName="nombre" required></ion-input>
             </ion-item>
             <div>
-                <div>
-                    El nombre es requerido
+                <div *ngIf="formInvalido">
+                    <span class="colorWarning">El nombre es requerido</span>
                 </div>
             </div>
             <!-- FIN NOMBRE -->
             <!-- APELLIDO -->
             <ion-item>
                 <ion-label floating>Apellido</ion-label>
-                <ion-input type="text" formControlName="apellido"></ion-input>
+                <ion-input type="text" name="apellido" formControlName="apellido"></ion-input>
             </ion-item>
             <div>
-                <div>
-                    El apellido es requerido
+                <div *ngIf="formInvalido">
+                    <span class="colorWarning">El apellido es requerido</span>
                 </div>
             </div>
             <!-- FIN APELLIDO -->
             <!-- EMAIL -->
             <ion-item>
                 <ion-label floating>Email</ion-label>
-                <ion-input type="email" formControlName="email"></ion-input>
+                <ion-input type="email" name="email" formControlName="email"></ion-input>
             </ion-item>
             <div>
-                <div>
-                    El email es requerido
+                <div *ngIf="formInvalido">
+                    <span class="colorWarning">El email es requerido</span>
                 </div>
             </div>
             <!-- FIN EMAIL -->
@@ -55,11 +55,11 @@
                 <ion-input type="password " formControlName="password"></ion-input>
             </ion-item>
             <div>
-                <div>
-                    Contraseña es requerida
+                <div *ngIf="formInvalido">
+                    <span class="colorWarning">Contraseña es requerida</span>
                 </div>
-                <div>
-                    6 caracteres minimo, 12 caracteres maximo
+                <div *ngIf="formInvalido">
+                    <span class="colorWarning">6 caracteres minimo, 12 caracteres maximo</span>
                 </div>
             </div>
             <!-- FIN PASSWORD -->
@@ -69,19 +69,20 @@
                 <ion-input type="password " formControlName="passwordRepetir"></ion-input>
             </ion-item>
             <div>
-                <div>
-                    Contraseña es requerida
+                <div *ngIf="formInvalido">
+                    <span class="colorWarning">Contraseña es requerida</span>
                 </div>
-                <div>
-                    6 caracteres minimo, 12 caracteres maximo
+                <div *ngIf="formInvalido">
+                    <span class="colorWarning">6 caracteres minimo, 12 caracteres maximo </span>
+                </div>
+                <div *ngIf="passwordInvalido">
+                    <span class="colorWarning">Contraseña no coincide</span>
                 </div>
             </div>
             <!-- FIN REPETIR PASSWORD -->
         </ion-list>
 
         <div padding-horizontal>
-            <div class="form-error ">{{signupError}}</div>
-
             <button ion-button full type="submit">Registrar</button>
         </div>
     </form>

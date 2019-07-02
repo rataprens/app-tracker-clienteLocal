@@ -9,6 +9,7 @@ import { UsuarioProvider, Credenciales } from '../providers/usuario/usuario';
 import { Storage } from '@ionic/storage';
 import { PedidosPage } from '../pages/pedidos/pedidos';
 import { LocalesPage } from '../pages/locales/locales';
+import { AngularFireAuth } from '@angular/fire/auth/auth';
 
 @Component({
   templateUrl: 'app.html'
@@ -17,7 +18,9 @@ export class MyApp {
   usuario:Credenciales = {};
   rootPage:any;
 
-  constructor(public storage:Storage, public menu:MenuController ,platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, public _usuarioProv: UsuarioProvider) {
+  constructor(public storage:Storage,
+     public menu:MenuController ,platform: Platform, statusBar: StatusBar,
+      splashScreen: SplashScreen, public _usuarioProv: UsuarioProvider , public afAuth:AngularFireAuth) {
     //Cuando la plataforma esta cargada
     platform.ready().then(() => {
 
@@ -25,34 +28,28 @@ export class MyApp {
           
       });
 
+
       this._usuarioProv.afAuth.authState.subscribe(
         user => {
 
           if(user){
-
-            if(platform.is('cordova')){
-              this.storage.get('nombre').then(nombre=>{
-                this.usuario.nombre = nombre;
-              });
-              this.storage.get('email').then(email=>{
-                this.usuario.email = email;
-              });
-              this.storage.get('imagen').then(imagen=>{
-                this.usuario.imagen = imagen;
-              }); 
-              this.storage.get('uid').then(uid=>{
-                this.usuario.uid = uid;
-              });
-              this.storage.get('provider').then(provider=>{
-                this.usuario.provider = provider;
-              });
+            var currentUser = afAuth.auth.currentUser;
+            if(currentUser.displayName){
+              console.log('hay nombre')
+              this.usuario.nombre = currentUser.displayName;
             }else{
-              this.usuario.nombre = localStorage.getItem('nombre');
-              this.usuario.email = localStorage.getItem('email');
-              this.usuario.imagen = localStorage.getItem('imagen');
-              console.log(this.usuario.imagen);
-              this.usuario.uid = localStorage.getItem('uid');
-              this.usuario.provider = localStorage.getItem('provider');
+              console.log('no hay nombre');
+              this.usuario.nombre = 'Nombre';
+            }
+            this.usuario.email = currentUser.email;
+            this.usuario.provider = currentUser.providerId;
+            this.usuario.uid = currentUser.uid
+            if(currentUser.photoURL){
+              console.log('si hay foto');
+              this.usuario.imagen = currentUser.photoURL;
+            }else{
+              console.log('no hay foto');
+              this.usuario.imagen = '../assets/imgs/photoUser.png';
             }
             console.log(this.usuario);
             this.rootPage = HomePage;

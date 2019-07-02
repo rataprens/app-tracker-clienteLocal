@@ -1,10 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+  import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, Slides, AlertController, LoadingController } from 'ionic-angular';
 import { UsuarioProvider } from '../../providers/usuario/usuario';
 import { HomePage } from '../home/home';
 import swal from 'sweetalert';
 import { UbicacionProvider } from '../../providers/ubicacion/ubicacion';
 import { CrearCuentaPage } from '../crear-cuenta/crear-cuenta';
+
 
 
 

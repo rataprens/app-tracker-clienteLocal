@@ -4,6 +4,7 @@ import { DetalleLocalPage } from '../detalle-local/detalle-local';
 import { UsuarioProvider } from '../../providers/usuario/usuario';
 import { HomePage } from '../home/home';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { UbicacionProvider } from '../../providers/ubicacion/ubicacion';
 
 
 @IonicPage()
@@ -16,7 +17,7 @@ export class LocalesPage {
 
   locales : any;
 
-  constructor(public db:AngularFirestore, public home:HomePage,public navCtrl: NavController, public navParams: NavParams, public _usuarioProv:UsuarioProvider) {
+  constructor(public db:AngularFirestore, public _ubicacionProv:UbicacionProvider,public navCtrl: NavController, public navParams: NavParams, public _usuarioProv:UsuarioProvider) {
 
     this.db.collection('locales').valueChanges().subscribe((data:any)=>{
       this.locales = data;
@@ -34,7 +35,7 @@ export class LocalesPage {
 
   salir(){
     this._usuarioProv.signOut();
-    this.home.detenerGeolocalizacion();
+    this._ubicacionProv.detenerGeolocalizacion();
   }
 
   detallesLocal(){

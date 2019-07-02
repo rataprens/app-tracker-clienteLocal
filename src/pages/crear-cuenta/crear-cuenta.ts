@@ -14,6 +14,8 @@ export class CrearCuentaPage implements OnInit {
   
   signupError: string;
   form: FormGroup;
+  formInvalido:boolean;
+  passwordInvalido:boolean;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fb:FormBuilder, public _usuarioProv:UsuarioProvider) {
 
@@ -21,7 +23,7 @@ export class CrearCuentaPage implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      email:['', Validators.compose([Validators.required, Validators.email])],
+      email:['',[Validators.required, Validators.email]],
       password:['',Validators.compose([Validators.required, Validators.minLength(6)])],
       nombre:['', Validators.compose([Validators.required])],
       apellido:['', Validators.compose([Validators.required])],
@@ -34,15 +36,26 @@ export class CrearCuentaPage implements OnInit {
   }
 
   signup(){
-    let data = this.form.value;
-    let credentials = {
-      email: data.email,
-      password: data.password
+    if(this.form.valid){
+      let data = this.form.value;
+      if(data.password == data.passwordRepetir){
+        let credentials = {
+          email: data.email,
+          password: data.password,
+          nombre: `${data.nombre} ${data.apellido}`
+        }
+        console.log(credentials.nombre);
+        this._usuarioProv.signup(credentials).then(
+            ()=> this.navCtrl.setRoot(HomePage, data), 
+            error => this.signupError = error.message
+          );
+        this.formInvalido = false;
+      }else{
+        this.passwordInvalido = true;
+      }
+    }else{
+      this.formInvalido = true;
     }
-    this._usuarioProv.signup(credentials).then(
-        ()=> this.navCtrl.setRoot(HomePage, data), 
-        error => this.signupError = error.message
-      );
   }
 
   atras(){
